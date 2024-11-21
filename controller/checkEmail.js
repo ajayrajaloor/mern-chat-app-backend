@@ -14,7 +14,7 @@ async function checkEmail(request,response){
         }
 
         return response.status(200).json({
-            message : "email verify",
+            message : "email verified",
             success : true,
             data : checkEmail
         })
