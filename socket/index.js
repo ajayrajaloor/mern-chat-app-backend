@@ -147,20 +147,54 @@ io.on('connection', async (socket) => {
     })
 
     //sidebar
-    const { ObjectId } = require('mongoose').Types;
     socket.on('sidebar', async (currentUserId) => {
         console.log('current user', currentUserId);
 
-       const conversation = await getConversation(currentUserId)
+        const conversation = await getConversation(currentUserId)
 
-       socket.emit('conversation', conversation)
+        socket.emit('conversation', conversation)
 
+    })
+
+    socket.on('seen', async (msgByUserId) => {
+
+        let conversation = await ConversationModel.findOne({
+            "$or": [
+                {
+                    sender: user?._id,
+                    receiver: msgByUserId
+                },
+                {
+                    sender: msgByUserId,
+                    receiver: user?._id
+                }
+            ]
+        })
+
+        const conversationMessageId = conversation?.messages || []
+
+        const updateMessages = await MessageModel.updateMany(
+            {
+                _id: { "$in": conversationMessageId },
+                msgByUserId: msgByUserId
+            },
+            {
+                "$set" : { seen : true }
+            }
+        )
+
+        //send conversation
+        const conversationSender = await getConversation(user?._id.toString())
+        const conversationReceiver = await getConversation(msgByUserId)
+
+        io.to(user?._id.toString()).emit('conversation', conversationSender)
+        io.to(msgByUserId).emit('conversation', conversationReceiver)
     })
 
 
     //disconnect
     socket.on('disconnect', () => {
-        onlineUser.delete(user?._id)
+        onlineUser.delete(user?._id?.toString())
         console.log('disconnected user', socket.id);
 
     })
