@@ -16,11 +16,12 @@ const getConversation = async(currentUserId) =>{
 
             // console.log("conv", conv);
 
-            const countUnseenMsg = conv.messages.reduce((prev, curr) => {
-                if(curr?.msgByUserId?.toString() !== currentUserId){
-                    return prev + (curr.seen ? 0 : 1)
+            const countUnseenMsg = conv?.messages?.reduce((prev, curr) => {
+                const msgByUserId = curr?.msgByUserId?.toString()
+                if(msgByUserId !== currentUserId){
+                    return prev + (curr?.seen ? 0 : 1)
                 }else{
-                    prev
+                   return prev
                 }
             }, 0)
 
@@ -34,8 +35,6 @@ const getConversation = async(currentUserId) =>{
         })
 
         return conversation
-
-        
 
     }else{
         return []
