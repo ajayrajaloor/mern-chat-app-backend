@@ -30,6 +30,11 @@ io.on('connection', async (socket) => {
     //current user details
     const user = await getUserDetailFromToken(token)
 
+    if(!user){
+        console.log("invalid token, disconnecting socket:", socket.id);
+        return socket.disconnect()
+    }
+
     //create a room for the specific user to know if the users are online or not
     socket.join(user?._id?.toString())
     onlineUser.add(user?._id?.toString())
@@ -38,7 +43,7 @@ io.on('connection', async (socket) => {
     io.emit('onlineUser', Array.from(onlineUser))
 
     socket.on('message-page', async (userId) => {
-        console.log('userId', userId);
+        // console.log('userId', userId);
         const userDetails = await UserModel.findById(userId).select("-password")
 
         const payload = {
@@ -190,13 +195,18 @@ io.on('connection', async (socket) => {
         io.to(user?._id.toString()).emit('conversation', conversationSender)
         io.to(msgByUserId).emit('conversation', conversationReceiver)
     })
-
-
-    //disconnect
+    
+    
+    // disconnect
     socket.on('disconnect', () => {
         onlineUser.delete(user?._id?.toString())
         console.log('disconnected user', socket.id);
-
+        io.emit('onlineUser',Array.from(onlineUser))
+    })
+    
+    socket.on('user-offline',userId =>{
+        onlineUser.delete(userId)
+        io.emit('online-users-updated',Array.from(onlineUser))
     })
 })
 

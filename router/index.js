@@ -25,7 +25,7 @@ router.get('/user-details',userDetails)
 router.post('/update-user',updateUserDetails)
 
 //logout user
-router.get('/logout',logout)
+router.post('/logout',logout)
 
 //search user
 router.post('/search-user',searchUser)
