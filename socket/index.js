@@ -15,8 +15,9 @@ const io = new Server(server, {
     cors: {
         origin: 'https://mern-chat-app-frontend-ecoe.onrender.com',
         methods: ['GET', 'POST'],
-        credentials: true
-    }
+        credentials: true,
+    },
+    transports: ['websocket', 'polling'],
 })
 
 
