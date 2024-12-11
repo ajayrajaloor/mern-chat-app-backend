@@ -13,7 +13,7 @@ const app = express()
 const server = http.createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: 'https://mern-chat-app-frontend-mocha.vercel.app',
+        origin: 'https://mern-chat-app-frontend-ecoe.onrender.com',
         methods: ['GET', 'POST'],
         credentials: true
     }
