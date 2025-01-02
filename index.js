@@ -8,7 +8,7 @@ const { app, server } = require('./socket/index')
 
 // const app = express()
 app.use(cors({
-    origin: 'https://mern-chat-app-frontend-ecoe.onrender.com',
+    origin: process.env.FRONTEND_URL,
     credentials: true
 }))
 
